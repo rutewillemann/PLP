@@ -1,12 +1,17 @@
 ;; ======================================================================
-;; EP1 de Paradigmas: Codificação de Huffman
+;; EP1 de Paradigmas: Codificacao de Huffman
 ;; Grupo: 
-;; - Bruna Amorim Maia, RA 10431883 - Infraestrutura e Árvore
-;; - Rute Willemann, 10436781 - Estatística e Codificação
+;; - Bruna Amorim Maia, RA 10431883
+;; - Rute Willemann, RA 10436781
 ;; ======================================================================
 
+;; COMO RODAR O PROGRAMA:
+;; 1. Crie um arquivo de texto chamado "in.txt" na mesma pasta deste codigo.
+;; 2. Escreva o texto (apenas letras e numeros) que deseja codificar.
+;; 3. No seu interpretador Lisp, carregue este arquivo (.lsp).
+;; 4. O programa executara automaticamente e criara o arquivo "out.txt" com o resultado.
 
-;; 1. Leitura e Limpeza do Arquivo
+;; 1. Leitura do arquivo "in.txt" (apenas letras e numeros)
 (defun ler-arquivo (caminho)
   (with-open-file (stream caminho)
     (loop for c = (read-char stream nil)
@@ -14,7 +19,7 @@
         if (or (alpha-char-p c) (digit-char-p c))
           collect c )))
 
-;; 2. Construção da Árvore de Huffman (O Algoritmo Principal)
+;; 2. Construcao da Arvore de Huffman
 (defun construir-arvore (tabela-freq)
   (if (= (length tabela-freq) 1)
       (car tabela-freq)
@@ -27,26 +32,25 @@
             )
         (construir-arvore (cons novo-no resto)))))
 
-
-;; 3. Conta a ocorrência de cada caractere no texto
+;; 3. Geracao da tabela de frequencias [cite: 10, 11]
 (defun tabela-frequencia (texto)
   (let ((lista-freq '()))
     (dolist (char texto)
       (let ((par (assoc char lista-freq)))
         (if par
-            (incf (cdr par))
-            (push (cons char 1) lista-freq))))
-    ;; Inverte para usar no sort
+            (setf (cdr par) (+ (cdr par) 1))
+            (setf lista-freq (cons (cons char 1) lista-freq)))))
+    ;; Converte para o formato (frequencia caractere)
     (mapcar (lambda (p) (list (cdr p) (car p))) lista-freq)))
 
-;; 4. Percorre a árvore e gera os códigos binários (Esquerda=0, Direita=1)
+;; 4. Geracao dos codigos binarios a partir da arvore
 (defun gerar-dicionario (arvore &optional (caminho ""))
   (if (null (cddr arvore)) ; Se nao tem filhos, eh uma folha
       (list (list (cadr arvore) caminho))
       (append (gerar-dicionario (cadr arvore) (concatenate 'string caminho "0"))
               (gerar-dicionario (caddr arvore) (concatenate 'string caminho "1")))))
 
-;; 5. Substitui o texto pelos códigos e salva no arquivo "out.txt"
+;; 5. Codificacao do texto e gravacao no arquivo "out.txt" [cite: 5, 14]
 (defun codificar-e-salvar (texto dicionario caminho-out)
   (with-open-file (stream caminho-out :direction :output :if-exists :supersede)
     (dolist (char texto)
@@ -54,17 +58,17 @@
         (format stream "~a" codigo)))))
 
 ;; ======================================================================
-;; FUNÇÃO PRINCIPAL (ORQUESTRAÇÃO)
+;; FUNCAO PRINCIPAL (ORQUESTRACAO)
 ;; ======================================================================
 
 (defun executar-huffman ()
-  (format t "Iniciando Codificação de Huffman...~%")
-  (let* ((texto (ler-arquivo "in.txt"))                 
-         (freq (tabela-frequencia texto))            
-         (arvore (construir-arvore freq))     
+  (format t "Iniciando Codificacao de Huffman...~%")
+  (let* ((texto (ler-arquivo "in.txt"))                    
+         (freq (tabela-frequencia texto))             
+         (arvore (construir-arvore freq))      
          (dict (gerar-dicionario arvore))
          (resultado (codificar-e-salvar texto dict "out.txt")))
     (format t "Arquivo codificado com sucesso em out.txt!~%")))
-    
-;; Executar 
+
+;; Execucao automatica ao carregar o arquivo
 (executar-huffman)

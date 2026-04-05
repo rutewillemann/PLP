@@ -1,0 +1,67 @@
+############################################################################
+#                                                                          #
+#           GUIA DE COMANDOS - HUFFMAN (LISP)                              #
+#                                                                          #
+############################################################################
+
+# ==========================================================================
+# PASSO 1: GARANTIR QUE TEM SBCL INSTALADO
+# ==========================================================================
+sbcl --version
+
+# (Se não tiver, instalar)
+sudo apt update
+sudo apt install sbcl -y
+
+
+# ==========================================================================
+# PASSO 2: EXECUÇÃO DO PROGRAMA
+# ==========================================================================
+# Rodar o programa Lisp
+sbcl --script HuffmanBrunaRute.lsp
+
+
+# ==========================================================================
+# PASSO 3: VERIFICAR SAÍDA GERADA
+# ==========================================================================
+# Ver conteúdo do arquivo codificado
+cat out.txt
+
+# Ver tamanho do arquivo gerado
+ls -l out.txt
+
+
+# ==========================================================================
+# PASSO 4: TESTES COM DIFERENTES ENTRADAS
+# ==========================================================================
+# Editar arquivo de entrada
+nano in.txt
+
+# Rodar novamente
+sbcl --script HuffmanBrunaRute.lsp
+
+# Ver saída
+cat out.txt
+
+
+# ==========================================================================
+# PASSO 5: VALIDAÇÃO (ADAPTADO DO DIFF)
+# ==========================================================================
+# Verificar se arquivo foi realmente gerado
+test -s out.txt && echo "OK: arquivo gerado" || echo "ERRO"
+
+# Comparar tamanho antes/depois (não é diff, mas ajuda)
+ls -l in.txt out.txt
+
+
+# ==========================================================================
+# EXTRA: VISUALIZAR APENAS PARTE DA SAÍDA
+# ==========================================================================
+head out.txt
+tail out.txt
+
+
+# ==========================================================================
+# LIMPEZA (OPCIONAL)
+# ==========================================================================
+rm -f out.txt
